@@ -8,6 +8,7 @@ public class Othello {
 	//0: not occupied 1: white 2: black
 	private int[][] board;
 	
+	//The number of white/black tokens on the board
 	private int whiteTokens;
 	private int blackTokens;
 	
@@ -25,6 +26,9 @@ public class Othello {
 		return numMoves;
 	}
 	
+	/**
+	 * Constructs a new empty board with the standard starting formation.
+	 */
 	public Othello() {
 		board = new int[8][8];
 		for (int i = 0; i < 8; i++) {
@@ -39,10 +43,28 @@ public class Othello {
 		whiteTokens = blackTokens = 2;
 	}
 	
-	public int getValue(Move move) {
+	private int getValue(Move move) {
 		return board[move.x][move.y];
 	}
 	
+	/**
+	 * Returns the status of the game.
+	 * @return 0 if undecided, 1 if white wins, 2 if black wins, 3 for a tie.
+	 */
+	public int gameStatus() {
+		if (!getValidMoves(1).isEmpty() || !getValidMoves(2).isEmpty())
+			return 0;
+		else if (whiteTokens > blackTokens) return 1;
+		else if (whiteTokens < blackTokens) return 2;
+		else return 3;
+	}
+	
+	/**
+	 * Tests if a player can make a provided move.
+	 * @param player 1 for white, 2 for black.
+	 * @param move The position where player moves.
+	 * @return true if the move can be made else false.
+	 */
 	public boolean isValidMove(int player, Move move) {
 		if (getValue(move) != 0) return false;
 		int opponent = (player == 1) ? 2 : 1;
@@ -64,6 +86,11 @@ public class Othello {
 		return false;
 	}
 	
+	/**
+	 * Gets all valid moves for a player.
+	 * @param player 1 for white, 2 for black.
+	 * @return An ArrayList containing the moves.
+	 */
 	public ArrayList<Move> getValidMoves(int player) {
 		ArrayList<Move> moves = new ArrayList<Move>();
 		for (int x = 0; x < 8; x++) {
@@ -75,6 +102,11 @@ public class Othello {
 		return moves;
 	}
 	
+	/**
+	 * Makes a move.
+	 * @param player 1 for white, 2 for black.
+	 * @param move The position to move to.
+	 */
 	public void makeMove(int player, Move move) {
 		if (player != 1 && player != 2) 
 			throw new IllegalArgumentException("Player has to be 1 or 2; not " + player);
