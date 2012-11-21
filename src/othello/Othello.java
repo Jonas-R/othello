@@ -1,5 +1,6 @@
 package othello;
 import java.util.ArrayList;
+import szte.mi.Move;
 
 public class Othello {
 	//Number of moves made. == number of tokens - 4
@@ -41,6 +42,13 @@ public class Othello {
 		board[4][3] = 2;
 		numMoves = 0;
 		whiteTokens = blackTokens = 2;
+	}
+	
+	public Othello(int[][] board) {
+		this.board = board;
+		whiteTokens = countTokens(false);
+		blackTokens = countTokens(true);
+		numMoves = whiteTokens + blackTokens - 4;
 	}
 	
 	private int getValue(Move move) {
@@ -126,14 +134,23 @@ public class Othello {
 			while(x < 8 && x >= 0 && y < 8 && y >= 0) {
 				if (board[x][y] == opponent)
 					turns.add(new Move(x,y));
-				else if (board[x][y] == player && !turns.isEmpty())
+				else if (board[x][y] == player && !turns.isEmpty()) {
 					turn(player, turns);
+					break;
+				}
 				else break;
 				x += direction[0]; y += direction[1];
 			}
 		}
 	}
-
+	
+	public Othello simulateMove(int player, Move move) {
+		int[][] new_board = copyBoard();
+		Othello o = new Othello(new_board);
+		o.makeMove(player, move);
+		return o;
+	}
+	
 	private void turn(int player, ArrayList<Move> turns) {
 		for (Move turn : turns) {
 			if (board[turn.x][turn.y]!= player) {
@@ -142,6 +159,58 @@ public class Othello {
 				if (player == 1) blackTokens--; else blackTokens++;
 			}
 		}
+	}
+	
+	private int[][] copyBoard() {
+		int[][] new_board = new int[8][8];
+		for (int x = 0; x < 8; x++) {
+			for (int y = 0; y < 8; y++) {
+				new_board[x][y] = board[x][y];
+			}
+		}
+		return new_board;
+	}
+	
+	private int countTokens(boolean black) {
+		int n = black ? 2 : 1;
+		int count = 0;
+		for (int x = 0; x < 8; x++) {
+			for (int y = 0; y < 8; y++) {
+				if (board[x][y] == n) count++;
+			}
+		}
+		return count;
+	}
+	
+	public int countStableTokens(int player) {
+		int[][] corners = { {0,0}, {0,7}, {7,0}, {7,7} };
+		int count = 0;
+		
+		for (int[] corner : corners) {
+			int x = corner[0]; int y = corner[1];
+			if (board[x][y] != player) break;
+			
+			count++;
+			
+			for (int[] direction : directions) {
+				x += direction[0]; y += direction[1];
+				while (x < 8 && y < 8 && x >= 0 && y >= 0) {
+					if (board[x][y] == player) count += 1;
+					else break;
+					x += direction[0]; y += direction[1];
+				}
+			}
+		}
+		
+		return count;
+	}
+	
+	public int getPosition(int x, int y) {
+		return board[x][y];
+	}
+	
+	public int[][] getBoard() {
+		return board;
 	}
 	
 	@Override

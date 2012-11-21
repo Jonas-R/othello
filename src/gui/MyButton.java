@@ -18,6 +18,10 @@ public class MyButton extends JButton{
 		this.player = player;
 		repaint();
 	}
+	
+	public int getPlayer() {
+		return player;
+	}
 
 	public void paintComponent(Graphics g) {
 		Graphics2D g2D = (Graphics2D) g;
@@ -30,10 +34,9 @@ public class MyButton extends JButton{
 			
 			this.setEnabled(false);
 			//g2D.setStroke(new BasicStroke(5F));
-			g2D.fillOval(5, 5, this.getWidth() - 10, this.getHeight() - 10);
-			
 			if(player == 1) g2D.setColor(Color.WHITE);
-			else g2D.setColor(Color.WHITE);
+			else g2D.setColor(Color.BLACK);
+			g2D.fillOval(5, 5, this.getWidth() - 10, this.getHeight() - 10);
 		}
 		
 	}
