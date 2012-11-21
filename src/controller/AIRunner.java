@@ -3,7 +3,7 @@ package controller;
 import java.util.Random;
 
 import szte.mi.*;
-import ai.PositionalAI;
+import ai.*;
 import othello.Othello;
 
 public class AIRunner {	
@@ -11,27 +11,32 @@ public class AIRunner {
 	
 	public double[] optimize() {
 		Random rnd = new Random();
-		PositionalAI p1 = new PositionalAI();
-		PositionalAI p2 = new PositionalAI();
+		MiniMaxAI p1 = new MiniMaxAI();
+		MiniMaxAI p2 = new MiniMaxAI();
 		
-		p1.setMOBILE_MULT(27.20356571142153);
-		p1.setSQUARE_MULT(72.4803353242168);
-		p1.setSTABLE_MULT(93.9212265071403);
-		
-		for (int i = 0; i < 10000; i++) {
-			p2.setMOBILE_MULT(rnd.nextDouble() * 100.0);
-			p2.setSQUARE_MULT(rnd.nextDouble() * 100.0);
-			p2.setSTABLE_MULT(rnd.nextDouble() * 100.0);
-			int res = simulate(p1,p2,50);
+		int count = 0; 
+		while(count < 5) {
+			
+			p2.setHeuristic(new Heuristic(rnd.nextDouble() * 100.0, rnd.nextDouble() * 100.0, rnd.nextDouble() * 100.0));
+			int res = simulate(p1,p2,2);
 			
 			if (res == 2) {
-				p1 = p2;
-				p2 = new PositionalAI();
-				System.out.println(p1.getMOBILE_MULT() + " " + p1.getSTABLE_MULT() + " " + p1.getSQUARE_MULT());
+				System.out.println(p2.getHeuristic().getMOBILE_MULT() + " " + p2.getHeuristic().getSQUARE_MULT() + " " + p2.getHeuristic().getSTABLE_MULT());
+				p1.setHeuristic(new Heuristic(
+						p2.getHeuristic().getMOBILE_MULT(), p2.getHeuristic().getSQUARE_MULT(),
+						p2.getHeuristic().getSTABLE_MULT()
+				));
+				count = 0;
+			}
+			else count++;
+			if (res == 1) {
+				System.out.println("lost");
 			}
 		}
 		
-		double[] optimal = { p1.getMOBILE_MULT(), p1.getSTABLE_MULT(), p1.getSQUARE_MULT() };
+		double[] optimal = { p1.getHeuristic().getMOBILE_MULT(),
+							 p1.getHeuristic().getSQUARE_MULT(),
+							 p1.getHeuristic().getSTABLE_MULT() };
 		return optimal;
 	}
 	
@@ -67,8 +72,11 @@ public class AIRunner {
 	}
 	
 	public static void main(String[] args) {
+		//AIRunner run = new AIRunner();
+		//double[] res = run.optimize();
+		//for(double i : res) System.out.println(i);
+		
 		AIRunner run = new AIRunner();
-		double[] res = run.optimize();
-		for(double i : res) System.out.println(i);
+		System.out.println(run.playN(new MiniMaxAI(), new GreedyAI(), 1));
 	}
 }
