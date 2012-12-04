@@ -90,8 +90,8 @@ public class OthelloGUI {
 	}
 	
 	public void repaint() {
-		for (int x = 0; x < 8; x++) {
-			for (int y = 0; y < 8; y++) {
+		for (byte x = 0; x < 8; x++) {
+			for (byte y = 0; y < 8; y++) {
 				buttons[(y*8) + x].setPlayer(othello.getPosition(x, y));
 			}
 		}
@@ -163,15 +163,15 @@ public class OthelloGUI {
 		
 		
 		
-		othello.makeMove(player1 ? 1 : 2, move);
+		othello.makeMove((byte) (player1 ? 1 : 2), move);
 		repaint();
 		return move;
 	}
 	
-	public void enableInput(ArrayList<Move> moves) {
+	public void enableInput(ArrayList<Integer> moves) {
 		disableInput();
-		for (Move move : moves)
-			buttons[(move.y * 8) + move.x].setEnabled(true);
+		for (int move : moves)
+			buttons[move].setEnabled(true);
 	}
 	
 	public void disableInput() {

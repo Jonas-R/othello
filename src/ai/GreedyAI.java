@@ -9,14 +9,14 @@ import szte.mi.*;
 public class GreedyAI implements Player {
 	private Othello o;
 	private boolean isWhite;
-	private int me;
-	private int opp;
+	private byte me;
+	private byte opp;
 	
 	public void init(int order, long t, Random rnd) {
 		o = new Othello();
 		isWhite = order == 1;
-		me = isWhite ? 1 : 2;
-		opp = isWhite ? 2 : 1;
+		me = (byte) (isWhite ? 1 : 2);
+		opp = (byte) (isWhite ? 2 : 1);
 	}
 	
 	public Move nextMove(Move prevMove, long topponent, long t) {
@@ -30,7 +30,7 @@ public class GreedyAI implements Player {
 		Move bestMove = null;
 		int bestScore = -65;
 		for (Move move : moves) {
-			Othello sim = new Othello(o.getBoard()).simulateMove(me, move);	
+			Othello sim = o.simulateMove(me, move);	
 			int score = isWhite ? sim.getWhiteTokens() - sim.getBlackTokens() : 
 				sim.getBlackTokens() - sim.getWhiteTokens();
 			if (score > bestScore) {

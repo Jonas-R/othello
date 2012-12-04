@@ -1,91 +1,117 @@
 package ai;
 
 import java.util.Random;
+import java.util.ArrayList;
 
 import othello.Othello;
 import szte.mi.*;
 
 public class MiniMaxAI implements Player {
 	private Othello o;
-	private boolean isWhite;
 	private int me;
 	private int opp;
 	
-	private final int MAX_DEPTH = 4;
-	private Heuristic heuristic = new Heuristic();
+	private TranspositionTable table;
+	
+	private final int MAX_DEPTH = 12;
+	private Evalutation heuristic = new Evalutation();
 	
 	public void init(int order, long t, Random rnd) {
+		table = new TranspositionTable(2^18, 4, rnd);
 		o = new Othello();
-		isWhite = order == 1;
-		me = isWhite ? 1 : 2;
-		opp = isWhite ? 2 : 1;
+		me = order == 1 ? 1 : 2;
+		opp = me == 1 ? 2 : 1;
 	}
 	
 	public Move nextMove(Move prevMove, long topponent, long t) {
-		if (prevMove != null) {
-			o.makeMove(opp, prevMove);
+		o.makeMove(opp, prevMove);
+		/*int saved = table.retrieve(o.getBoard());
+		if (saved != -1) {
+			System.out.println(saved);
+			o.makeMove(me, saved);
+			return new Move(saved % 8, saved / 8);
 		}
+		System.out.println("Nope");*/
 		
-		Move bestMove = null;
+		
+		int bestMove = -1;
 		double bestScore = Double.NEGATIVE_INFINITY;
 		
-		if (o.getValidMoves(me).isEmpty()) return null;
+		ArrayList<Integer> moves = o.getValidMoves(me);
+		if (moves.isEmpty()) {
+			o.makeMove(me, -1);
+			return null;
+		}
 		
-		for (Move move : o.getValidMoves(me)) {
-			double score = minValue(o.simulateMove(me, move), 0);
+		for (int move : moves) {
+			double score = minValue(o.simulateMove(me, move), 0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
 			if (score > bestScore) {
 				bestMove = move;
 				bestScore = score;
 			}
 		}
 		
+		/*table.insert(new TableEntry(o.getBoard(), bestMove));*/
 		o.makeMove(me, bestMove);
-		return bestMove;
+		return new Move(bestMove % 8, bestMove / 8); 
 	}
 	
-	public double maxValue(Othello state, int depth) {
-		int res = state.gameStatus();
-		if (res != 0) {
-			if (res == me) return Double.MAX_VALUE;
-			else if (res == opp) return -Double.MAX_VALUE;
-			else return 0; //Is this sensible?
-		}
+	public double maxValue(Othello state, int depth, double alpha, double beta) {
+		if (depth > MAX_DEPTH) return heuristic.calculateScore(state, me);
 		
 		double score = Double.NEGATIVE_INFINITY;
 		
-		if (state.getValidMoves(me).isEmpty()) return minValue(state, depth);
+		ArrayList<Integer> moves = state.getValidMoves(me);
+		if (moves.isEmpty()) {
+			int res = state.gameStatus();
+			if (res != 0) {
+				if (res == me) return Double.MAX_VALUE;
+				else if (res == opp) return -Double.MAX_VALUE;
+				else return -Double.MAX_VALUE; //Is this sensible?
+			}
+			return minValue(state.simulateMove(me, -1), depth, alpha, beta);
+		}
 		
-		for (Move move : state.getValidMoves(me)) {
-			if (depth > MAX_DEPTH) score = Math.max(score, heuristic.calculateScore(state, me));
-			else score = Math.max(score, minValue(state.simulateMove(me, move), ++depth));
+		for(int move : moves) {
+			score = Math.max(score, minValue(state.simulateMove(me, move), ++depth, alpha, beta));
+			
+			if (score >= beta)
+				return score;
+			alpha = Math.max(alpha, score);
 		}
 		return score;
 	}
 	
-	public double minValue(Othello state, int depth) {
-		int res = state.gameStatus();
-		if (res != 0) {
-			if (res == me) return Double.MAX_VALUE;
-			else if (res == opp) return -Double.MAX_VALUE;
-			else return 0; //Is this sensible?
-		}
+	public double minValue(Othello state, int depth, double alpha, double beta) {		
+		if (depth > MAX_DEPTH) return heuristic.calculateScore(state, me);
 		
 		double score = Double.POSITIVE_INFINITY;
 		
-		if (state.getValidMoves(opp).isEmpty()) return maxValue(state, depth);
+		ArrayList<Integer> moves = state.getValidMoves(opp);
+		if (moves.isEmpty()) {
+			int res = state.gameStatus();
+			if (res != 0) {
+				if (res == me) return Double.MAX_VALUE;
+				else if (res == opp) return -Double.MAX_VALUE;
+				else return -Double.MAX_VALUE; //Is this sensible?
+			}
+			return maxValue(state.simulateMove(opp, -1), depth, alpha, beta);
+		}
 		
-		for (Move move : state.getValidMoves(opp)) {
-			if (depth > MAX_DEPTH) score = Math.min(score, heuristic.calculateScore(state, opp));
-			else score = Math.min(score, maxValue(state.simulateMove(opp, move), ++depth));
+		for (int move : moves) {
+			score = Math.min(score, maxValue(state.simulateMove(opp, move), ++depth, alpha, beta));
+			if (score <= alpha) 
+				return score;
+			beta = Math.min(beta, score);
 		}
 		return score;
 	}
 	
-	public void setHeuristic(Heuristic heuristic) {
+	public void setHeuristic(Evalutation heuristic) {
 		this.heuristic = heuristic;
 	}
 	
-	public Heuristic getHeuristic() {
+	public Evalutation getHeuristic() {
 		return this.heuristic;
 	}
 

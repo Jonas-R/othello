@@ -44,13 +44,13 @@ public class GUIRunner {
 						System.err.println(ex);
 					}
 				}
-				if (!gui.cannotMove()) { othello.makeMove(humanBlack ? 2 : 1, gui.getNextMove()); }
+				if (!gui.cannotMove()) { othello.makeMove((byte) (humanBlack ? 2 : 1), gui.getNextMove()); }
 				prevMove = gui.getNextMove();
 				humanTurn = false;
 			}
 			else {
 				prevMove = ai.nextMove(prevMove, 1000, 1000);
-				othello.makeMove(humanBlack ? 1 : 2, prevMove);
+				othello.makeMove((byte) (humanBlack ? 1 : 2), prevMove);
 				humanTurn = true;
 			}
 		}

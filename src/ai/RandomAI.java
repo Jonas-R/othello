@@ -8,8 +8,8 @@ import szte.mi.*;
 public class RandomAI implements Player{
 	private Random rnd;
 	private Othello o;
-	private int me;
-	private int opp;
+	private byte me;
+	private byte opp;
 	
 	public void init(int order, long t, Random rnd) {
 		o = new Othello();
@@ -25,12 +25,12 @@ public class RandomAI implements Player{
 		if (prevMove != null) {
 			o.makeMove(opp, prevMove);
 		}
-		ArrayList<Move> moves = o.getValidMoves(me);
+		ArrayList<Integer> moves = o.getValidMoves(me);
 		if (moves.isEmpty()) return null;
 		
-		Move move = moves.get(rnd.nextInt(moves.size()));
+		int move = moves.get(rnd.nextInt(moves.size()));
 		o.makeMove(me, move);
-		return move;
+		return new Move(move % 8, move / 8);
 	}
 	
 }
