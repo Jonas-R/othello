@@ -28,6 +28,7 @@ public class Evalutation{
 	public Evalutation() { }
 
 	public double calculateScore(Othello state, int player) {
+		
 		int opp = player == 1 ? 2 : 1;
 		int pieceDiff;
 		
@@ -49,6 +50,12 @@ public class Evalutation{
 		double[] curWeights = weights[state.getNumMoves() / 4];
 		return (curWeights[0] * (double) pieceDiff) + (curWeights[1] * (double) mobilityDiff) + (curWeights[2] * (double) potMobilityDiff) +
 			   (curWeights[3] * (double) cornerDiff) + (curWeights[4] * (double) xDiff);
+	}
+	
+	public double calculateEndScore(Othello state, int player, int res) {
+		if (res == player) return Double.MAX_VALUE;
+		if (res == 3) return 0;
+		else return -Double.MAX_VALUE;
 	}
 	
 	private int getCornerDiff(Othello state, int player, int opp) {

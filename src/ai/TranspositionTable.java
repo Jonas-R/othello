@@ -7,23 +7,43 @@ import othello.BitBoard;
 public class TranspositionTable {
 	private int numBuckets;
 	private Bucket[] buckets;
+	private int bucketsize;
 	int seed;
 	
 	public TranspositionTable(int n, int bucketSize, Random rnd) {
+		System.out.println(n + " " + bucketSize + " " + n / bucketSize);
 		numBuckets = n / bucketSize;
+		System.out.println(numBuckets);
 		buckets = new Bucket[numBuckets];
 		for (int i = 0; i < numBuckets; i++) {
 			buckets[i] = new Bucket(bucketSize);
 		}
 		seed = rnd.nextInt();
+		this.bucketsize = bucketSize;
 	}
 	
-	public int retrieve(BitBoard board) {
-		return buckets[Math.abs(hash(board)) % numBuckets].retrieve(board);
+	public double probeTable(BitBoard board, int depth, double alpha, double beta) {
+		TableEntry entry = retrieve(board);
+		if (entry != null) {
+			if (entry.depth >= depth) {
+				if (entry.flag == TableEntry.EXACT)
+					return entry.score;
+				if (entry.flag == TableEntry.ALPHA && entry.score <= alpha)
+					return alpha;
+				if (entry.flag == TableEntry.BETA && entry.score >= beta)
+					return beta;
+			}
+		}
+		return Double.NaN;
+	}
+	
+	
+	public TableEntry retrieve(BitBoard board) {
+		return buckets[Math.abs(hash(board) % numBuckets)].retrieve(board);
 	}
 	
 	public void insert(TableEntry entry) {
-		buckets[Math.abs(hash(entry.board)) % numBuckets].insert(entry); 
+		buckets[Math.abs(hash(entry.board) % numBuckets)].insert(entry); 
 	}
 	
 	private int hash(BitBoard board) {
@@ -71,7 +91,17 @@ public class TranspositionTable {
         h *= m;
         h ^= h >>> 15;
         
-        System.out.println(h);
         return h;
     }
+	
+	public void printStatistics() {
+		int[] counts = new int[bucketsize + 1];
+		for (int i = 0; i < bucketsize + 1; i++) counts[i] = 0;
+		for (Bucket bucket : buckets) {
+			counts[bucket.items()]++;
+		}
+		for (int i = 0; i < bucketsize + 1; i++) {
+			System.out.println(i + ": " + counts[i]);
+		}
+	}
 }

@@ -15,16 +15,16 @@ public class Bucket {
 		pointer = 0;
 	}
 	
-	public int retrieve(BitBoard board) {
+	public TableEntry retrieve(BitBoard board) {
 		for (int i = 0; i < size; i++) {
 			if (values[i] != null) {
-				if (values[i].board.getWhite() == board.getWhite() && values[i].board.getBlack() == board.getBlack()) {
+				if (values[i].board.equals(board)) {
 					referenced[i] = 1;
-					return values[i].bestMove;
+					return values[i];
 				}
 			}
 		}
-		return -1;
+		return null;
 	}
 	
 	public void insert(TableEntry elem) {
@@ -37,5 +37,15 @@ public class Bucket {
 		referenced[pointer] = 0;
 		pointer = (pointer + 1) % size;
 		insert(elem);
+	}
+	
+	public int items() {
+		int count = 0;
+		for (int i = 0; i < size; i++) {
+			if (values[i] != null) {
+				count++;
+			}
+		}
+		return count;
 	}
 }
