@@ -43,6 +43,7 @@ public class NegamaxAB implements Player {
 		}
 		
 		o.makeMove(me, bestMove);
+		System.out.println(bestMove % 8 + " " + bestMove / 8);
 		return new Move(bestMove % 8, bestMove / 8); 
 	}
 	

@@ -47,14 +47,14 @@ public class AIRunner {
 		
 		long startTime = System.nanoTime();
 		AIRunner run = new AIRunner();
-		NegamaxABTab white = new NegamaxABTab();
-		NegamaxABTab black = new NegamaxABTab();
-		for (int i = 0; i < 10; i++) {
+		NegamaxAB white = new NegamaxAB();
+		NegamaxAB black = new NegamaxAB();
+		//for (int i = 0; i < 10; i++) {
 			System.out.println(run.playN(white, black, 1));
 			long endTime = System.nanoTime();
 			System.out.println(((double) (endTime - startTime)) / (Math.pow(10.0, 9.0)));
-			white.getTable().printStatistics();
-			black.getTable().printStatistics();
-		}
+			//white.getTable().printStatistics();
+			//black.getTable().printStatistics();
+		//}
 	}
 }

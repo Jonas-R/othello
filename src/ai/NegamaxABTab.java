@@ -17,8 +17,7 @@ public class NegamaxABTab implements Player {
 	
 	public void init(int order, long t, Random rnd) {
 		if (table == null) {
-			int n = 1 << 19;
-			table = new TranspositionTable(n, 4, rnd);
+			table = new TranspositionTable(1 << 19, 4, rnd);
 		}
 		o = new Othello();
 		me = order == 1 ? 1 : 2;

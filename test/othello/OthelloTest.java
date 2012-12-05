@@ -21,6 +21,7 @@ public class OthelloTest {
 	public void testGetValidMoves() {
 		Othello o = new Othello();
 		ArrayList<Integer> moves = o.getValidMoves(2);
+		//for (int move : moves) System.out.println(move);
 		assertTrue("Number of valid moves is not 4!", moves.size() == 4);
 		assertTrue("Move (2,3) missing!", moves.contains((3 * 8) + 2));
 		assertTrue("Move (3,2) missing!", moves.contains((2 * 8) + 3));
@@ -40,6 +41,7 @@ public class OthelloTest {
 		assertTrue("Incorrect num of black tokens (" + o.getBlackTokens() + ")"
 				, o.getBlackTokens() == 4);
 		ArrayList<Integer> moves = o.getValidMoves(2);
+		for (int move : moves) System.out.println(move);
 		assertTrue("Number of valid moves is not 4!", moves.size() == 4);
 		assertTrue("Move (1,2) missing!", moves.contains((2 * 8) + 1));
 		assertTrue("Move (2,3) missing!", moves.contains((3 * 8) + 2));

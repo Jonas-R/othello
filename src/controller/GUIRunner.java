@@ -9,13 +9,13 @@ import szte.mi.*;
 public class GUIRunner {
 	private Othello othello;
 	private GUIThread gui;
-	private MiniMaxABTrans ai;
+	private NegamaxABTab ai;
 	
 	private boolean humanBlack = false;
 	
 	public GUIRunner() {
 		gui = new GUIThread();
-		ai = new MiniMaxABTrans();
+		ai = new NegamaxABTab();
 		startGame();
 	}
 	

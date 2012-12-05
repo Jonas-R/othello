@@ -7,6 +7,9 @@ public class BitBoard {
 	private long white;
 	private long black;
 	
+	private final long MASK_RIGHT = -72340172838076674L;
+	private final long MASK_LEFT = 9187201950435737471L;
+	
 	public static final long[] adjacency = {
 		0L,
 		5L,
@@ -276,21 +279,90 @@ public class BitBoard {
 	}
 	
 	public boolean hasValidMove(int player) {
-		long potentialMoves = getPotentialMoves(player);
-		if (potentialMoves == 0L) return false;
-		for (int i = 0; i < 64; i++) {
-			if ((potentialMoves & (1L << i)) != 0L && isValidMove(player, i))
-					return true;
-		}
-		return false;
+		return !getValidMoves(player).isEmpty();
 	}
 	
 	public ArrayList<Integer> getValidMoves(int player) {
+		long myBoard = player == 1 ? white : black;
+		long oppBoard = player == 1 ? black : white;
 		long potentialMoves = getPotentialMoves(player);
+		long validMoves = 0L;
 		ArrayList<Integer> moves = new ArrayList<Integer>();
+		/* move pieces to the right */
+		int count = 1;
+		long temp = ((potentialMoves << 1) & MASK_RIGHT) & oppBoard;
+		while (temp != 0L) {
+			temp = (temp << 1) & MASK_RIGHT;
+			count++;
+			validMoves |= (temp & myBoard) >>> count;
+			temp &= oppBoard;
+		}
+		/* move pieces to the left */
+		count = 1;
+		temp = ((potentialMoves >>> 1) & MASK_LEFT) & oppBoard;
+		while (temp != 0L) {
+			temp = (temp >>> 1) & MASK_LEFT;
+			count++;
+			validMoves |= (temp & myBoard) << count;
+			temp &= oppBoard;
+		}
+		/* move pieces up */
+		count = 1;
+		temp = (potentialMoves >>> 8) & oppBoard;
+		while (temp != 0L) {
+			temp >>>= 8;
+			count++;
+			validMoves |= (temp & myBoard) << (8 * count);
+			temp &= oppBoard;
+		}
+		/* move pieces down */
+		count = 1;
+		temp = (potentialMoves << 8) & oppBoard;
+		while (temp != 0L) {
+			temp <<= 8;
+			count++;
+			validMoves |= (temp & myBoard) >>> (8 * count);
+			temp &= oppBoard;
+		}
+		/* move pieces up and right */
+		count = 1;
+		temp = ((potentialMoves >>> 7) & MASK_RIGHT) & oppBoard;
+		while (temp != 0L) {
+			temp = (temp >>> 7) & MASK_RIGHT;
+			count++;
+			validMoves |= (temp & myBoard) << (7 * count);
+			temp &= oppBoard;
+		}
+		/* move pieces up and left */
+		count = 1;
+		temp = ((potentialMoves >>> 9) & MASK_LEFT) & oppBoard;
+		while (temp != 0L) {
+			temp = (temp >>> 9) & MASK_LEFT;
+			count++;
+			validMoves |= (temp & myBoard) << (9 * count);
+			temp &= oppBoard;
+		}
+		/* move pieces down and right */
+		count = 1;
+		temp = ((potentialMoves << 9) & MASK_RIGHT) & oppBoard;
+		while (temp != 0L) {
+			temp = (temp << 9) & MASK_RIGHT;
+			count++;
+			validMoves |= (temp & myBoard) >>> (9 * count);
+			temp &= oppBoard;
+		}
+		/* move pieces down and left */
+		count = 1;
+		temp = ((potentialMoves << 7) & MASK_LEFT) & oppBoard;
+		while (temp != 0L) {
+			temp = (temp << 7) & MASK_LEFT;
+			count++;
+			validMoves |= (temp & myBoard) >>> (7 * count);
+			temp &= oppBoard;
+		}
+		
 		for (int i = 0; i < 64; i++) {
-				if ((potentialMoves & (1L << i)) != 0L && isValidMove(player, i))
-						moves.add(i);
+			if ((validMoves & (1L << i)) != 0L) moves.add(i);
 		}
 		return moves;
 	}
@@ -361,4 +433,5 @@ public class BitBoard {
 		if (this.white == other.white && this.black == other.black) return true;
 		else return false;
 	}
+	
 }
