@@ -15,6 +15,9 @@ public class NegamaxABTab implements Player {
 	private final int MAX_DEPTH = 5;
 	private Evalutation heuristic = new Evalutation();
 	
+	private int firstMove;
+	private boolean lostLastGame = false;
+	
 	public void init(int order, long t, Random rnd) {
 		if (table == null) {
 			table = new TranspositionTable(1 << 19, 4, rnd);
@@ -52,13 +55,13 @@ public class NegamaxABTab implements Player {
 		byte flag = TableEntry.ALPHA;
 		double saved = table.probeTable(state.getBoard(), depth, alpha, beta);
 		if (!Double.isNaN(saved)) {
-			return saved;
+			return player * saved;
 		}
 					
 		if (depth <= 0) {
-			saved = player * heuristic.calculateScore(state, me);
+			saved = heuristic.calculateScore(state, me);
 			table.insert(new TableEntry(state.getBoard().copyBoard(), depth, saved, TableEntry.EXACT));
-			return saved;
+			return player * saved;
 		}
 		
 		ArrayList<Integer> moves = state.getValidMoves(player == 1 ? me : opp);
@@ -74,7 +77,7 @@ public class NegamaxABTab implements Player {
 		for (int move : moves) {
 			score = -negamax(state.simulateMove(player == 1 ? me : opp, move), depth - 1, -beta, -alpha, -player);
 			if (score >= beta) {
-				table.insert(new TableEntry(state.getBoard().copyBoard(), depth, beta, TableEntry.BETA));
+				table.insert(new TableEntry(state.getBoard().copyBoard(), depth, player * beta, TableEntry.BETA));
 				return score;
 			}
 			if (score > alpha) {
@@ -82,7 +85,7 @@ public class NegamaxABTab implements Player {
 				alpha = score;
 			}
 		}
-		table.insert(new TableEntry(state.getBoard().copyBoard(), depth, alpha,  flag));
+		table.insert(new TableEntry(state.getBoard().copyBoard(), depth, player * alpha,  flag));
 		return alpha;
 	}
 	

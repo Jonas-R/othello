@@ -43,15 +43,10 @@ public class AIRunner {
 		return scoreW - scoreB;
 	}
 	
-	public static void main(String[] args) {
-		//AIRunner run = new AIRunner();
-		//double[] res = run.optimize();
-		//for(double i : res) System.out.println(i);
-		
-		long startTime = System.nanoTime();
+	public static void main(String[] args) {		
 		AIRunner run = new AIRunner();
 		NegamaxABTab white = new NegamaxABTab();
-		NegamaxAB black = new NegamaxAB();
+		NegamaxABTab black = new NegamaxABTab();
 		System.out.println(run.simulate(white, black, 10));
 	}
 }
