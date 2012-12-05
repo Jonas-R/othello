@@ -35,6 +35,7 @@ public class AIRunner {
 			}
 			if (o.gameStatus() == 1) scoreW++;
 			else if (o.gameStatus() == 2) scoreB++;
+			System.out.println(o);
 		}
 		return scoreW - scoreB;
 	}
@@ -46,8 +47,14 @@ public class AIRunner {
 		
 		long startTime = System.nanoTime();
 		AIRunner run = new AIRunner();
-		System.out.println(run.playN(new MiniMaxAI(), new MiniMaxAI(), 1));
-		long endTime = System.nanoTime();
-		System.out.println(((double) (endTime - startTime)) / (Math.pow(10.0, 9.0)));
+		NegamaxABTab white = new NegamaxABTab();
+		NegamaxABTab black = new NegamaxABTab();
+		for (int i = 0; i < 10; i++) {
+			System.out.println(run.playN(white, black, 1));
+			long endTime = System.nanoTime();
+			System.out.println(((double) (endTime - startTime)) / (Math.pow(10.0, 9.0)));
+			white.getTable().printStatistics();
+			black.getTable().printStatistics();
+		}
 	}
 }

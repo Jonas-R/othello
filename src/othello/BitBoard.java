@@ -9,70 +9,70 @@ public class BitBoard {
 	
 	public static final long[] adjacency = {
 		0L,
-		1797L,
-		3594L,
-		7188L,
-		14376L,
-		28752L,
-		57504L,
+		5L,
+		10L,
+		20L,
+		40L,
+		80L,
+		160L,
 		0L,
-		197123L,
+		65537L,
 		460039L,
 		920078L,
 		1840156L,
 		3680312L,
 		7360624L,
 		14721248L,
-		12599488L,
-		50463488L,
+		8388736L,
+		16777472L,
 		117769984L,
 		235539968L,
 		471079936L,
 		942159872L,
 		1884319744L,
 		3768639488L,
-		3225468928L,
-		12918652928L,
+		2147516416L,
+		4295032832L,
 		30149115904L,
 		60298231808L,
 		120596463616L,
 		241192927232L,
 		482385854464L,
 		964771708928L,
-		825720045568L,
-		3307175149568L,
+		549764202496L,
+		1099528404992L,
 		7718173671424L,
 		15436347342848L,
 		30872694685696L,
 		61745389371392L,
 		123490778742784L,
 		246981557485568L,
-		211384331665408L,
-		846636838289408L,
+		140739635838976L,
+		281479271677952L,
 		1975852459884544L,
 		3951704919769088L,
 		7903409839538176L,
 		15806819679076352L,
 		31613639358152704L,
 		63227278716305408L,
-		54114388906344448L,
-		216739030602088448L,
+		36029346774777856L,
+		72058693549555712L,
 		505818229730443264L,
 		1011636459460886528L,
 		2023272918921773056L,
 		4046545837843546112L,
 		8093091675687092224L,
 		-2260560722335367168L,
-		-4593460513685372928L,
+		-9223231299366420480L,
 		0L,
-		362258295026614272L,
-		724516590053228544L,
-		1449033180106457088L,
-		2898066360212914176L,
-		5796132720425828352L,
-		-6854478632857894912L,
+		360287970189639680L,
+		720575940379279360L,
+		1441151880758558720L,
+		2882303761517117440L,
+		5764607523034234880L,
+		-6917529027641081856L,
 		0L,
-	};
+		};
 	
 	public static final int[][] directionlist = {
 		{ -1, -1, -1, 8, -1, -1, 1, 9 },
@@ -251,7 +251,7 @@ public class BitBoard {
 				oppPotential |= adjacency[n];
 			}
 		}
-		results[0] = count1s(myPotential) - count1s(oppPotential);
+		results[0] = Long.bitCount(myPotential) - Long.bitCount(oppPotential);
 		
 		int myMoves = 0, oppMoves = 0;
 		for (int i = 0; i < 64; i++) {
@@ -289,10 +289,8 @@ public class BitBoard {
 		long potentialMoves = getPotentialMoves(player);
 		ArrayList<Integer> moves = new ArrayList<Integer>();
 		for (int i = 0; i < 64; i++) {
-				if ((potentialMoves & (1L << i)) != 0L) {
-					if (isValidMove(player, i))
+				if ((potentialMoves & (1L << i)) != 0L && isValidMove(player, i))
 						moves.add(i);
-				}
 		}
 		return moves;
 	}
@@ -323,7 +321,7 @@ public class BitBoard {
 		int totalturns = 1;
 		setPosition(n, player);
 		
-		int [] neighbors = directionlist[n];
+		int[] neighbors = directionlist[n];
 		for (int i = 0; i < 8; i++) {
 			m = neighbors[i];
 			turns = new int[8];
@@ -357,5 +355,10 @@ public class BitBoard {
 
 	public long getBlack() {
 		return black;
+	}
+	
+	public boolean equals(BitBoard other) {
+		if (this.white == other.white && this.black == other.black) return true;
+		else return false;
 	}
 }

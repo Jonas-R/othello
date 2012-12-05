@@ -41,5 +41,12 @@ public Move( int x, int y ) {
 	this.y = y;
 }
 
+@Override
+public boolean  equals(Object other) {
+	if (!(other instanceof Move))  return false;
+	Move m = (Move) other;
+	if (m.x == this.x && m.y == this.y) return true;
+	else return false;
+}
 }
 

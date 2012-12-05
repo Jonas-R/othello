@@ -90,8 +90,6 @@ public class Othello {
 //			throw new IllegalArgumentException("Move (" + move.x + "," + move.y + ") is not valid!");
 		
 		numMoves++;
-		
-		
 		int turns = board.makeMove(player, (move.y * 8) + move.x);
 		if (player == 1) whiteTokens += turns + 1; else whiteTokens -= turns;
 		if (player == 1) blackTokens -= turns; else blackTokens += turns + 1;
