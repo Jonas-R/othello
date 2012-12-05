@@ -13,7 +13,7 @@ public class NegamaxAB implements Player {
 	public int nodes_searched = 0;
 	public int cuts = 0;
 	
-	private final int MAX_DEPTH = 5;
+	private final int MAX_DEPTH = 6;
 	private Evalutation heuristic = new Evalutation();
 	
 	public void init(int order, long t, Random rnd) {
@@ -43,7 +43,6 @@ public class NegamaxAB implements Player {
 		}
 		
 		o.makeMove(me, bestMove);
-		System.out.println(bestMove % 8 + " " + bestMove / 8);
 		return new Move(bestMove % 8, bestMove / 8); 
 	}
 	

@@ -204,17 +204,8 @@ public class BitBoard {
 	public void setPosition(Move move, int player) { setPosition( move.x, move.y, player); }
 	
 	public int countTokens(int player) {
-		if (player == 1) return count1s(white);
-		else return count1s(black);		
-	}
-	
-	private int count1s(long x) {
-		   byte n = 0;
-		   while (x != 0) {
-		      n += 1;
-		      x = x & (x - 1L);
-		   }
-		   return n;
+		if (player == 1) return Long.bitCount(white);
+		else return Long.bitCount(black);		
 	}
 	
 	public int countStableTokens(int player) {
@@ -255,15 +246,7 @@ public class BitBoard {
 			}
 		}
 		results[0] = Long.bitCount(myPotential) - Long.bitCount(oppPotential);
-		
-		int myMoves = 0, oppMoves = 0;
-		for (int i = 0; i < 64; i++) {
-			if ((myPotential & (1L << i)) != 0L && isValidMove(player, i))
-				myMoves++;
-			else if ((oppPotential & (1L << i)) != 0L && isValidMove(opp, i))
-				oppMoves++;
-		}
-		results[1] = myMoves - oppMoves;
+		results[1] = countMoves(player, myPotential) - countMoves(opp, oppPotential);
 		return results;
 	}
 	
@@ -276,6 +259,85 @@ public class BitBoard {
 			}
 		}
 		return potentialMoves & (~(white | black));
+	}
+	
+	private int countMoves(int player, long potentialMoves) {
+		long myBoard = player == 1 ? white : black;
+		long oppBoard = player == 1 ? black : white;
+		long validMoves = 0L;
+		/* move pieces to the right */
+		int count = 1;
+		long temp = ((potentialMoves << 1) & MASK_RIGHT) & oppBoard;
+		while (temp != 0L) {
+			temp = (temp << 1) & MASK_RIGHT;
+			count++;
+			validMoves |= (temp & myBoard) >>> count;
+			temp &= oppBoard;
+		}
+		/* move pieces to the left */
+		count = 1;
+		temp = ((potentialMoves >>> 1) & MASK_LEFT) & oppBoard;
+		while (temp != 0L) {
+			temp = (temp >>> 1) & MASK_LEFT;
+			count++;
+			validMoves |= (temp & myBoard) << count;
+			temp &= oppBoard;
+		}
+		/* move pieces up */
+		count = 1;
+		temp = (potentialMoves >>> 8) & oppBoard;
+		while (temp != 0L) {
+			temp >>>= 8;
+			count++;
+			validMoves |= (temp & myBoard) << (8 * count);
+			temp &= oppBoard;
+		}
+		/* move pieces down */
+		count = 1;
+		temp = (potentialMoves << 8) & oppBoard;
+		while (temp != 0L) {
+			temp <<= 8;
+			count++;
+			validMoves |= (temp & myBoard) >>> (8 * count);
+			temp &= oppBoard;
+		}
+		/* move pieces up and right */
+		count = 1;
+		temp = ((potentialMoves >>> 7) & MASK_RIGHT) & oppBoard;
+		while (temp != 0L) {
+			temp = (temp >>> 7) & MASK_RIGHT;
+			count++;
+			validMoves |= (temp & myBoard) << (7 * count);
+			temp &= oppBoard;
+		}
+		/* move pieces up and left */
+		count = 1;
+		temp = ((potentialMoves >>> 9) & MASK_LEFT) & oppBoard;
+		while (temp != 0L) {
+			temp = (temp >>> 9) & MASK_LEFT;
+			count++;
+			validMoves |= (temp & myBoard) << (9 * count);
+			temp &= oppBoard;
+		}
+		/* move pieces down and right */
+		count = 1;
+		temp = ((potentialMoves << 9) & MASK_RIGHT) & oppBoard;
+		while (temp != 0L) {
+			temp = (temp << 9) & MASK_RIGHT;
+			count++;
+			validMoves |= (temp & myBoard) >>> (9 * count);
+			temp &= oppBoard;
+		}
+		/* move pieces down and left */
+		count = 1;
+		temp = ((potentialMoves << 7) & MASK_LEFT) & oppBoard;
+		while (temp != 0L) {
+			temp = (temp << 7) & MASK_LEFT;
+			count++;
+			validMoves |= (temp & myBoard) >>> (7 * count);
+			temp &= oppBoard;
+		}
+		return Long.bitCount(validMoves);		
 	}
 	
 	public boolean hasValidMove(int player) {

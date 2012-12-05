@@ -11,9 +11,7 @@ public class TranspositionTable {
 	int seed;
 	
 	public TranspositionTable(int n, int bucketSize, Random rnd) {
-		System.out.println(n + " " + bucketSize + " " + n / bucketSize);
 		numBuckets = n / bucketSize;
-		System.out.println(numBuckets);
 		buckets = new Bucket[numBuckets];
 		for (int i = 0; i < numBuckets; i++) {
 			buckets[i] = new Bucket(bucketSize);

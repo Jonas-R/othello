@@ -17,6 +17,7 @@ public class AIRunner {
 	}
 	
 	public int playN(Player white, Player black, int n) {
+		long startTime = System.nanoTime();
 		int scoreW = 0; int scoreB = 0;
 		
 		for (int i = 0; i < n; i++) {
@@ -37,6 +38,8 @@ public class AIRunner {
 			else if (o.gameStatus() == 2) scoreB++;
 			System.out.println(o);
 		}
+		long endTime = System.nanoTime();
+		System.out.println(((double) (endTime - startTime)) / (Math.pow(10.0, 9.0)));
 		return scoreW - scoreB;
 	}
 	
@@ -47,14 +50,8 @@ public class AIRunner {
 		
 		long startTime = System.nanoTime();
 		AIRunner run = new AIRunner();
-		NegamaxAB white = new NegamaxAB();
+		NegamaxABTab white = new NegamaxABTab();
 		NegamaxAB black = new NegamaxAB();
-		//for (int i = 0; i < 10; i++) {
-			System.out.println(run.playN(white, black, 1));
-			long endTime = System.nanoTime();
-			System.out.println(((double) (endTime - startTime)) / (Math.pow(10.0, 9.0)));
-			//white.getTable().printStatistics();
-			//black.getTable().printStatistics();
-		//}
+		System.out.println(run.simulate(white, black, 10));
 	}
 }
