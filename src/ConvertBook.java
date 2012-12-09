@@ -49,10 +49,13 @@ public class ConvertBook {
 			BufferedWriter writer[] = new BufferedWriter[16];
 			for (int i = 0; i < 16; i++) {
 				writer[i] = Files.newBufferedWriter(Paths.get("positions" + i + ".txt"), Charset.forName("UTF-8"), java.nio.file.StandardOpenOption.WRITE);
-				writer[i].write("discD;mobD;potmobD;cornerD;xsquD;moves;result");
+				writer[i].write("discD;mobD;potmobD;cornerD;xsquD;moves;result\n");
 			}
 			for (int i = 0; i< output.size(); i++) {	
 				writer[output.get(i).getNumMoves() / 4].write(output.get(i).toString());
+			}
+			for (int i = 0; i < 16; i++) {
+				writer[i].close();
 			}
 		} catch (IOException ex) {
 			System.err.format("IOException: %s%n", ex);

@@ -46,7 +46,7 @@ public class AIRunner {
 	public static void main(String[] args) {		
 		AIRunner run = new AIRunner();
 		NegamaxABTab white = new NegamaxABTab();
-		NegamaxAB black = new NegamaxAB();
-		System.out.println(run.simulate(white, black, 10));
+		NegamaxABTab black = new NegamaxABTab();
+		System.out.println(run.simulate(white, black, 2));
 	}
 }

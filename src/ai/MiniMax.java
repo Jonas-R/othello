@@ -12,7 +12,7 @@ public class MiniMax implements Player {
 	private int opp;
 	
 	private final int MAX_DEPTH = 2;
-	private Evalutation heuristic = new Evalutation();
+	private Evaluation heuristic = new Evaluation();
 	
 	public void init(int order, long t, Random rnd) {
 		o = new Othello();
@@ -87,11 +87,11 @@ public class MiniMax implements Player {
 		return score;
 	}
 	
-	public void setHeuristic(Evalutation heuristic) {
+	public void setHeuristic(Evaluation heuristic) {
 		this.heuristic = heuristic;
 	}
 	
-	public Evalutation getHeuristic() {
+	public Evaluation getHeuristic() {
 		return this.heuristic;
 	}
 

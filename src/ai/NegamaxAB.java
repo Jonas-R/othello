@@ -11,8 +11,8 @@ public class NegamaxAB implements Player {
 	private int me;
 	private int opp;
 	
-	private final int MAX_DEPTH = 6;
-	private Evalutation heuristic = new Evalutation();
+	private final int MAX_DEPTH = 5;
+	private Evaluation heuristic = new Evaluation();
 	
 	public void init(int order, long t, Random rnd) {
 		o = new Othello();

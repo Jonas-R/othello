@@ -13,7 +13,7 @@ public class MiniMaxAB implements Player {
 	public int nodes_searched = 0;
 	public int cuts = 0;
 	private final int MAX_DEPTH = 4;
-	private Evalutation heuristic = new Evalutation();
+	private Evaluation heuristic = new Evaluation();
 	
 	public void init(int order, long t, Random rnd) {
 		o = new Othello();
@@ -99,11 +99,11 @@ public class MiniMaxAB implements Player {
 		return score;
 	}
 	
-	public void setHeuristic(Evalutation heuristic) {
+	public void setHeuristic(Evaluation heuristic) {
 		this.heuristic = heuristic;
 	}
 	
-	public Evalutation getHeuristic() {
+	public Evaluation getHeuristic() {
 		return this.heuristic;
 	}
 

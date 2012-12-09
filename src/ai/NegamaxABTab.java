@@ -12,8 +12,8 @@ public class NegamaxABTab implements Player {
 	private int opp;
 	private TranspositionTable table = null;
 	
-	private final int MAX_DEPTH = 6;
-	private Evalutation heuristic = new Evalutation();
+	private final int MAX_DEPTH = 5;
+	private Evaluation heuristic = new Evaluation();
 	
 	public void init(int order, long t, Random rnd) {
 		if (table == null) {
