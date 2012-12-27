@@ -30,7 +30,7 @@ public class BitBoard {
 		{ this.white = white; this.black = black; }
 	
 	/**
-	 * Checks the status of the cell at the provided coordinates.
+	 * Checks the status of the cell at coordinates <b>x</b> and <b>y</b>.
 	 * @param x X coordinate at which to check.
 	 * @param y Y coordinate at which to check.
 	 * @return 0: unoccupied, 1: white, 2: black
@@ -43,8 +43,8 @@ public class BitBoard {
 	}
 	
 	/**
-	 * Checks the status of the cell at the provided index.
-	 * @param x Index at which to check. 0 <= n < 64
+	 * Checks the status of the cell at index <b>n</b>.
+	 * @param n Index at which to check. 0 <= n < 64
 	 * @return 0: unoccupied, 1: white, 2: black
 	 */
 	public int getPosition(int n) {
@@ -55,14 +55,14 @@ public class BitBoard {
 	}
 	
 	/**
-	 * Checks the status of the cell at the coordinates of move.
+	 * Checks the status of the cell at the coordinates of <b>move</b>.
 	 * @param move Move representing the coordinates to check at.
 	 * @return 0: unoccupied, 1: white, 2: black
 	 */
 	public int getPosition(Move move) { return getPosition( move.x, move.y); }
 	
 	/**
-	 * Sets the cell at the provided coordinates to the provided value.
+	 * Sets the cell at coordinates <b>x</b> and <b>y</b> to <b>player</b>.
 	 * 
 	 * Performs no checks on the input for efficiency reasons!
 	 * 
@@ -83,7 +83,7 @@ public class BitBoard {
 	}
 	
 	/**
-	 * Sets the cell at the provided index to the provided value.
+	 * Sets the cell at index <b>n</b> to <b>player</b>.
 	 * 
 	 * Performs no checks on the input for efficiency reasons!
 	 * 
@@ -103,7 +103,7 @@ public class BitBoard {
 	}
 	
 	/**
-	 * Sets the cell at coordinates represented by the provided move to the provided value.
+	 * Sets the cell at coordinates represented by <b>move</b> to <b>player</b>.
 	 * 
 	 * Performs no checks on the input for efficiency reasons!
 	 * 
@@ -113,15 +113,20 @@ public class BitBoard {
 	public void setPosition(Move move, int player) { setPosition( move.x, move.y, player); }
 	
 	/**
-	 * Counts the number of tokens for {@code player}.
+	 * Counts the number of tokens for <b>player</b>.
 	 * @param player 1: white, 2: black
-	 * @return The number of tokens {@code player} has on the board.
+	 * @return The number of tokens <b>player</b> has on the board.
 	 */
 	public int countTokens(int player) {
 		if (player == 1) return Long.bitCount(white);
 		else return Long.bitCount(black);		
 	}
 	
+	/**
+	 * Returns the potential mobility and real mobility differences.
+	 * @param player The player from whose viewpoint to calculate the differences. 1: white, 2: black.
+	 * @return A 2-element array. Element 0: Potential mobility difference. Element 1: Real mobility difference.
+	 */
 	public int[] getMobilityDiffs(int player) {
 		int opp = player == 1 ? 2 : 1;
 		long myPotential = 0L;
@@ -141,6 +146,13 @@ public class BitBoard {
 		return results;
 	}
 	
+	/**
+	 * Gets the potential moves for <b>player</b>
+	 * 
+	 * Potential moves are defined as empty cells that are adjacent to opponent's discs.
+	 * @param player 1: white, 2: black
+	 * @return A long where bits at the indices of potential moves are set to 1.
+	 */
 	private long getPotentialMoves(int player) {
 		long potentialMoves = 0L;
 		int opp = player == 1 ? 2 : 1;
