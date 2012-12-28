@@ -250,7 +250,7 @@ public class BitBoard {
 	}
 	
 	public boolean hasValidMove(int player) {
-		return countMoves(player, getPotentialMoves(player)) == 0;
+		return countMoves(player, getPotentialMoves(player)) > 0;
 	}
 	
 	public ArrayList<Integer> getValidMoves(int player) {
@@ -260,24 +260,6 @@ public class BitBoard {
 			if ((validMoves & (1L << i)) != 0L) moves.add(i);
 		}
 		return moves;
-	}
-	
-	public boolean isValidMove(int player, int n) {
-		int opp = (player == 1 ? 2 : 1);
-		boolean turned;
-		int m;
-		
-		int[] neighbors = Constants.directionList[n];
-		for (int i = 0; i < 8; i++) {
-			m = neighbors[i];
-			turned = false;
-			while (m != -1 && getPosition(m) == opp) {
-				turned = true;
-				m = Constants.directionList[m][i];
-			}
-			if (turned && m != -1 && getPosition(m) == player) return true;
-		}
-		return false;
 	}
 	
 	public int makeMove(int player, int n) {
