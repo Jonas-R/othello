@@ -73,11 +73,13 @@ public class BitBoard {
 	public void setPosition(int x, int y, int player) {
 		long val = 1L << coordToIndex(x,y);
 		if (player == 1) {
-			black ^= val;
+			if ((black & val) != 0L)
+				black ^= val;
 			white |= val;
 		}
 		else {
-			white ^= val;
+			if ((white & val) != 0L)
+				white ^= val;
 			black |= val;
 		}
 	}
@@ -164,7 +166,7 @@ public class BitBoard {
 		return potentialMoves & (~(white | black));
 	}
 	
-	private int countMoves(int player, long potentialMoves) {
+	private long extractValidMoves(int player, long potentialMoves) {
 		long myBoard = player == 1 ? white : black;
 		long oppBoard = player == 1 ? black : white;
 		long validMoves = 0L;
@@ -240,92 +242,20 @@ public class BitBoard {
 			validMoves |= (temp & myBoard) >>> (7 * count);
 			temp &= oppBoard;
 		}
-		return Long.bitCount(validMoves);		
+		return validMoves;
+	}
+	
+	private int countMoves(int player, long potentialMoves) {
+		return Long.bitCount(extractValidMoves(player, potentialMoves));		
 	}
 	
 	public boolean hasValidMove(int player) {
-		return !getValidMoves(player).isEmpty();
+		return countMoves(player, getPotentialMoves(player)) == 0;
 	}
 	
 	public ArrayList<Integer> getValidMoves(int player) {
-		long myBoard = player == 1 ? white : black;
-		long oppBoard = player == 1 ? black : white;
-		long potentialMoves = getPotentialMoves(player);
-		long validMoves = 0L;
 		ArrayList<Integer> moves = new ArrayList<Integer>();
-		/* move pieces to the right */
-		int count = 1;
-		long temp = ((potentialMoves << 1) & Constants.MASK_RIGHT) & oppBoard;
-		while (temp != 0L) {
-			temp = (temp << 1) & Constants.MASK_RIGHT;
-			count++;
-			validMoves |= (temp & myBoard) >>> count;
-			temp &= oppBoard;
-		}
-		/* move pieces to the left */
-		count = 1;
-		temp = ((potentialMoves >>> 1) & Constants.MASK_LEFT) & oppBoard;
-		while (temp != 0L) {
-			temp = (temp >>> 1) & Constants.MASK_LEFT;
-			count++;
-			validMoves |= (temp & myBoard) << count;
-			temp &= oppBoard;
-		}
-		/* move pieces up */
-		count = 1;
-		temp = (potentialMoves >>> 8) & oppBoard;
-		while (temp != 0L) {
-			temp >>>= 8;
-			count++;
-			validMoves |= (temp & myBoard) << (8 * count);
-			temp &= oppBoard;
-		}
-		/* move pieces down */
-		count = 1;
-		temp = (potentialMoves << 8) & oppBoard;
-		while (temp != 0L) {
-			temp <<= 8;
-			count++;
-			validMoves |= (temp & myBoard) >>> (8 * count);
-			temp &= oppBoard;
-		}
-		/* move pieces up and right */
-		count = 1;
-		temp = ((potentialMoves >>> 7) & Constants.MASK_RIGHT) & oppBoard;
-		while (temp != 0L) {
-			temp = (temp >>> 7) & Constants.MASK_RIGHT;
-			count++;
-			validMoves |= (temp & myBoard) << (7 * count);
-			temp &= oppBoard;
-		}
-		/* move pieces up and left */
-		count = 1;
-		temp = ((potentialMoves >>> 9) & Constants.MASK_LEFT) & oppBoard;
-		while (temp != 0L) {
-			temp = (temp >>> 9) & Constants.MASK_LEFT;
-			count++;
-			validMoves |= (temp & myBoard) << (9 * count);
-			temp &= oppBoard;
-		}
-		/* move pieces down and right */
-		count = 1;
-		temp = ((potentialMoves << 9) & Constants.MASK_RIGHT) & oppBoard;
-		while (temp != 0L) {
-			temp = (temp << 9) & Constants.MASK_RIGHT;
-			count++;
-			validMoves |= (temp & myBoard) >>> (9 * count);
-			temp &= oppBoard;
-		}
-		/* move pieces down and left */
-		count = 1;
-		temp = ((potentialMoves << 7) & Constants.MASK_LEFT) & oppBoard;
-		while (temp != 0L) {
-			temp = (temp << 7) & Constants.MASK_LEFT;
-			count++;
-			validMoves |= (temp & myBoard) >>> (7 * count);
-			temp &= oppBoard;
-		}
-		
+		long validMoves = extractValidMoves(player, getPotentialMoves(player));
 		for (int i = 0; i < 64; i++) {
 			if ((validMoves & (1L << i)) != 0L) moves.add(i);
 		}
