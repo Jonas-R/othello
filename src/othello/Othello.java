@@ -31,20 +31,16 @@ public class Othello {
 		numNullMoves = 0;
 	}
 	
+	/**
+	 * Clones <b>this</b>.
+	 * @param old_Othello The Othello object to clone.
+	 */
 	public Othello(Othello old_Othello) {
 		this.board = old_Othello.board.copyBoard();
 		this.whiteTokens = old_Othello.whiteTokens;
 		this.blackTokens = old_Othello.blackTokens;
 		this.numMoves = old_Othello.numMoves;
 		this.numNullMoves = old_Othello.numNullMoves;
-	}
-	
-	public Othello(BitBoard board, int whiteTokens, int blackTokens, int numMoves, int numNullMoves) {
-		this.board = board;
-		this.whiteTokens = whiteTokens;
-		this.blackTokens = blackTokens;
-		this.numMoves = numMoves;
-		this.numNullMoves = numNullMoves;
 	}
 	
 	/**
@@ -69,13 +65,21 @@ public class Othello {
 		return board.getValidMoves(player);
 	}
 	
+	/**
+	 * Tests if <b>player</b> has valid moves.
+	 * @param player 1: white, 2: black
+	 * @return True if <b>player</b> has at least one valid move.
+	 */
 	public boolean hasValidMove(int player) {
 		return board.hasValidMove(player);
 	}
 	
 	/**
 	 * Makes a move.
-	 * @param player 1 for white, 2 for black.
+	 * 
+	 * Does not check if any of the inputs is valid
+	 * and does not check whether the move itself is valid.
+	 * @param player 1: white, 2: black
 	 * @param move The position to move to.
 	 */
 	public void makeMove(int player, Move move) {
@@ -95,6 +99,14 @@ public class Othello {
 		if (player == 1) blackTokens -= turns; else blackTokens += turns + 1;
 	}
 	
+	/**
+	 * Makes a move.
+	 * 
+	 * Does not check if any of the inputs is valid
+	 * and does not check whether the move itself is valid.
+	 * @param player 1: white, 2: black
+	 * @param move The position to move to.
+	 */
 	public void makeMove(int player, int n) {
 		if (n == -1) {
 			numNullMoves++;
@@ -113,12 +125,12 @@ public class Othello {
 		if (player == 1) blackTokens -= turns; else blackTokens += turns;
 	}
 	
-	public Othello simulateMove(int player, Move move) {
-		Othello o = new Othello(this);
-		o.makeMove(player, move);
-		return o;
-	}
-	
+	/**
+	 * Simulates a move.
+	 * @param player 1: white, 2: black
+	 * @param n The index to move to.
+	 * @return An Othello instance where the move has been made.
+	 */
 	public Othello simulateMove(int player, int n) {
 		Othello o = new Othello(this);
 		o.makeMove(player, n);
