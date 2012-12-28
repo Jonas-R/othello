@@ -148,13 +148,6 @@ public class BitBoard {
 		return results;
 	}
 	
-	/**
-	 * Gets the potential moves for <b>player</b>
-	 * 
-	 * Potential moves are defined as empty cells that are adjacent to opponent's discs.
-	 * @param player 1: white, 2: black
-	 * @return A long where bits at the indices of potential moves are set to 1.
-	 */
 	private long getPotentialMoves(int player) {
 		long potentialMoves = 0L;
 		int opp = player == 1 ? 2 : 1;
@@ -249,10 +242,20 @@ public class BitBoard {
 		return Long.bitCount(extractValidMoves(player, potentialMoves));		
 	}
 	
+	/**
+	 * Tests if <b>player</b> has valid moves.
+	 * @param player 1: white, 2: black
+	 * @return True if <b>player</b> has at least one valid move.
+	 */
 	public boolean hasValidMove(int player) {
 		return countMoves(player, getPotentialMoves(player)) > 0;
 	}
 	
+	/**
+	 * Gets the valid moves for <b>player</b>.
+	 * @param player 1: white, 2: black
+	 * @return An ArrayList containing the indices of the valid moves.
+	 */
 	public ArrayList<Integer> getValidMoves(int player) {
 		ArrayList<Integer> moves = new ArrayList<Integer>();
 		long validMoves = extractValidMoves(player, getPotentialMoves(player));
@@ -262,6 +265,15 @@ public class BitBoard {
 		return moves;
 	}
 	
+	/**
+	 * Makes a move.
+	 * 
+	 * Does not check if any of the inputs is valid
+	 * and does not check whether the move itself is valid.
+	 * @param player 1: white, 2: black
+	 * @param n Index at which to move.
+	 * @return The number of tokens that were turned. I should probably fix this though.
+	 */
 	public int makeMove(int player, int n) {
 		setPosition(n, player);
 		int opp = player == 1 ? 2 : 1;
@@ -294,18 +306,32 @@ public class BitBoard {
 		return (y * 8) + x;
 	}
 	
+	/**
+	 * @return A copy of the board.
+	 */
 	public BitBoard copyBoard() {
 		return new BitBoard(white, black);
 	}
 
+	/**
+	 * @return A long representing the white bitboard.
+	 */
 	public long getWhite() {
 		return white;
 	}
 
+	/**
+	 * @return A long representing the black bitboard.
+	 */
 	public long getBlack() {
 		return black;
 	}
 	
+	/**
+	 * Tests if two BitBoards are equal.
+	 * @param other The BitBoard to compare this to.
+	 * @return True iff the Bitboards are equal.
+	 */
 	public boolean equals(BitBoard other) {
 		if (this.white == other.white && this.black == other.black) return true;
 		else return false;
